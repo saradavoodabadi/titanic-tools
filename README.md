@@ -89,6 +89,10 @@ A step-by-step interactive tutorial that demonstrates:
 
 This notebook is meant to be beginner-friendly and helps understand both the **Python code** and the **data science process**.
 
+## License
+
+This project is licensed under the MIT License. You are free to use, modify, and distribute it with attribution.
+
 ---
 ## Future Work
 
@@ -98,5 +102,6 @@ Potential extensions that could make the project more advanced:
 - Perform **feature importance analysis** to see which variables matter most.  
 - Explore more advanced visualizations (stacked bar charts, survival curves).  
 - Add a **CLI (command-line interface)** to run basic analyses without a notebook.  
+
 
 
