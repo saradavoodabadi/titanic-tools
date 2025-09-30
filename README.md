@@ -9,3 +9,19 @@ Clone this repo or download, then install in editable mode:
 pip install -e .
 ```
 
+## Usage Example
+
+```python
+from titanic_tools import TitanicData, TitanicAnalysis
+import matplotlib.pyplot as plt
+
+td = TitanicData("data/Titanic-Dataset.csv")
+df = td.clean_basic()
+
+ta = TitanicAnalysis(df)
+print("Overall survival:", ta.survival_rate())
+print("By sex:\n", ta.survival_rate(by="sex"))
+
+ta.plot_survival_by("sex")
+plt.show()
+```
