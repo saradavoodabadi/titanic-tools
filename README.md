@@ -89,3 +89,14 @@ A step-by-step interactive tutorial that demonstrates:
 
 This notebook is meant to be beginner-friendly and helps understand both the **Python code** and the **data science process**.
 
+---
+## Future Work
+
+Potential extensions that could make the project more advanced:
+
+- Train a **logistic regression classifier** to predict survival.  
+- Perform **feature importance analysis** to see which variables matter most.  
+- Explore more advanced visualizations (stacked bar charts, survival curves).  
+- Add a **CLI (command-line interface)** to run basic analyses without a notebook.  
+
+
