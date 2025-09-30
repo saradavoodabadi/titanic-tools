@@ -22,7 +22,7 @@ class TitanicData:
 
     def __init__(self, csv_path: str | Path):
         self.csv_path = Path(csv_path)
-        self.df: pd.DataFrame | None = None  # will store the working DataFrame
+        self.df: pd.DataFrame | None = None
 
     def load(self, encoding: str = "utf-8") -> pd.DataFrame:
         """
@@ -159,3 +159,4 @@ class TitanicData:
 
         self.df = df
         return df
+
