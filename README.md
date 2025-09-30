@@ -7,9 +7,11 @@ Clone this repo or download, then install in editable mode:
 
 ```bash
 pip install -e .
-Usage Example
-python
-Copy code
+```
+
+
+## Usage Example
+
 from titanic_tools import TitanicData, TitanicAnalysis
 import matplotlib.pyplot as plt
 
@@ -22,5 +24,3 @@ print("By sex:\n", ta.survival_rate(by="sex"))
 
 ta.plot_survival_by("sex")
 plt.show()
-Tutorial Notebook
-See notebooks/tutorial.ipynb for a step-by-step demo.
