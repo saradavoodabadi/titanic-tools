@@ -1,7 +1,8 @@
-# Titanic Tools
+from titanic_tools import TitanicData, TitanicAnalysis
 
-A beginner-friendly Python package for Titanic survival analysis.
+td = TitanicData("data/Titanic-Dataset.csv")  # keep CSV local, not pushed
+df = td.clean_basic()
+ta = TitanicAnalysis(df)
+print(ta.survival_rate(by="sex"))
 
-## Install (local)
-```bash
-pip install -e .
+
