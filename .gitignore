@@ -15,6 +15,6 @@ build/
 .ipynb_checkpoints/
 
 # Data (keep big files out of Git)
-data/*.csv
+
 data/*.zip
 data/*.xlsx
