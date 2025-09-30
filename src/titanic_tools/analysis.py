@@ -1,4 +1,3 @@
-from __future__ import annotations
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -6,85 +5,93 @@ import seaborn as sns
 
 class TitanicAnalysis:
     """
-    Compute simple survival statistics and draw one bar plot.
+    Titanic survival analysis and visualization tools.
 
     Parameters
     ----------
     df : pandas.DataFrame
-        Cleaned Titanic dataframe. Must include a 0/1 column for survival.
-        Accepts either 'Survived' or 'survived' and normalizes to 'Survived'.
+        Preprocessed Titanic dataset (after cleaning/feature engineering).
     """
 
     def __init__(self, df: pd.DataFrame):
-        # Ensure a survival column exists, normalize its name.
-        if "Survived" not in df.columns and "survived" not in df.columns:
-            raise ValueError("DataFrame must contain a 'Survived' column (0/1).")
-        self.df = df.rename(columns={"survived": "Survived"}).copy()
+        self.df = df
 
-        # Convenience map so users can pass 'sex' or 'Sex'
-        self._cols_lower = {c.lower(): c for c in self.df.columns}
-
-    def survival_rate(self, by: str | list[str] | None = None):
+    def survival_rate(self, by: str | list[str] = None) -> pd.DataFrame:
         """
-        Compute survival rate overall or grouped.
+        Calculate survival rate overall or grouped by one or more columns.
 
         Parameters
         ----------
-        by : str or list of str or None, default None
-            Column(s) to group by (e.g., 'sex', ['sex', 'pclass']).
-            Case-insensitive for convenience.
-
-        Returns
-        -------
-        float or pandas.Series/DataFrame
-            Overall rate if ``by=None``, otherwise grouped rates.
-        """
-        if by is None:
-            return float(self.df["Survived"].mean())
-
-        # Allow case-insensitive column names for user friendliness
-        col = (
-            [self._cols_lower.get(c.lower(), c) for c in by]
-            if isinstance(by, list)
-            else self._cols_lower.get(by.lower(), by)
-        )
-
-        # observed=True silences a future pandas warning and is correct
-        return (
-            self.df.groupby(col, observed=True)["Survived"]
-            .mean()
-            .rename("SurvivalRate")
-        )
-
-    def plot_survival_by(self, by: str) -> plt.Axes:
-        """
-        Draw a bar chart of survival rate for a single categorical column.
-
-        Parameters
-        ----------
-        by : str
-            Categorical column to plot (e.g., 'sex', 'pclass', 'embarked').
-
-        Returns
-        -------
-        matplotlib.axes.Axes
-            Axes object with the bar plot.
-        """
-        col = self._cols_lower.get(by.lower(), by)
-        rates = self.survival_rate(col).reset_index()
-        ax = sns.barplot(data=rates, x=col, y="SurvivalRate")
-        ax.set_title(f"Survival Rate by {col}")
-        ax.set_ylabel("Rate (0–1)")
-        return ax
-
-    def describe_numeric(self) -> pd.DataFrame:
-        """
-        Describe numeric columns split by survival (0 vs 1).
+        by : str or list of str, optional
+            Column name(s) to group by before calculating survival rate.
 
         Returns
         -------
         pandas.DataFrame
-            ``describe()`` summary for numeric columns grouped by 'Survived'.
+            Survival rate table.
         """
-        num = self.df.select_dtypes("number")
-        return num.groupby(self.df["Survived"]).describe()
+        df = self.df.copy()
+        if by is None:
+            rate = df['survived'].mean()
+            return pd.DataFrame({'overall_survival_rate': [rate]})
+        else:
+            grouped = df.groupby(by)['survived'].mean().reset_index()
+            grouped.rename(columns={'survived': 'survival_rate'}, inplace=True)
+            return grouped
+
+    def plot_survival_by(self, column: str):
+        """
+        Plot survival rate by a single categorical column.
+
+        Parameters
+        ----------
+        column : str
+            Column name to group by and plot.
+        """
+        df = self.df.copy()
+        grouped = df.groupby(column)['survived'].mean().reset_index()
+
+        plt.figure(figsize=(8, 5))
+        sns.barplot(x=column, y='survived', data=grouped, palette='muted')
+        plt.title(f'Survival Rate by {column.capitalize()}')
+        plt.ylabel('Survival Rate')
+        plt.xlabel(column.capitalize())
+        plt.ylim(0, 1)
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+        plt.show()
+
+    def plot_survival_by_age_group(self):
+        """
+        Bin passengers into age groups and plot survival rates per group.
+
+        Age Groups:
+        - Child: 0–12
+        - Teen: 13–17
+        - Young Adult: 18–29
+        - Adult: 30–49
+        - Senior: 50+
+
+        The function uses seaborn to create a barplot of survival rates by age group.
+        """
+        df = self.df.copy()
+
+        # Define age bins and labels
+        bins = [0, 12, 17, 29, 49, 120]
+        labels = ['Child', 'Teen', 'Young Adult', 'Adult', 'Senior']
+        df['age_group'] = pd.cut(df['age'], bins=bins, labels=labels)
+
+        # Calculate survival rate by age group
+        survival_rates = df.groupby('age_group')['survived'].mean().reset_index()
+
+        # Plotting
+        plt.figure(figsize=(8, 5))
+        sns.barplot(x='age_group', y='survived', data=survival_rates, palette='viridis')
+
+        plt.title('Survival Rate by Age Group')
+        plt.ylabel('Survival Rate')
+        plt.xlabel('Age Group')
+        plt.ylim(0, 1)
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+        plt.show()

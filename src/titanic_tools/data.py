@@ -38,7 +38,6 @@ class TitanicData:
         pandas.DataFrame
             Raw dataframe with original columns from the CSV.
         """
-        # Read the CSV (Kaggle Titanic file is UTF-8)
         self.df = pd.read_csv(self.csv_path, encoding=encoding)
         return self.df
 
@@ -59,7 +58,6 @@ class TitanicData:
             Cleaned dataframe (also stored in ``self.df``).
         """
         if self.df is None:
-            # If user forgot to call .load(), do it for them.
             self.load()
 
         df = self.df.copy()
@@ -105,6 +103,59 @@ class TitanicData:
             df["family_size"] = df["sibsp"] + df["parch"] + 1
         if "age" in df.columns:
             df["is_child"] = (df["age"] < 16).astype(int)
+
+        self.df = df
+        return df
+
+    def clean_advanced(self) -> pd.DataFrame:
+        """
+        Perform advanced data cleaning and feature engineering on the Titanic dataset.
+
+        This includes:
+        - Filling missing Age values with median grouped by Sex and Pclass
+        - Filling missing Embarked values with the mode
+        - Dropping Cabin (too sparse) and Ticket
+        - Creating new features: FamilySize, IsAlone, Title (from Name)
+        - Encoding categorical features (Sex, Embarked, Title)
+
+        Returns
+        -------
+        pd.DataFrame
+            Cleaned and feature-engineered DataFrame.
+        """
+        if self.df is None:
+            self.load()
+
+        df = self.df.copy()
+
+        # 1) Consistent column names -> lower snake_case
+        df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+
+        # Fill Age: Median age by Sex and Pclass
+        df["age"] = df.groupby(["sex", "pclass"])["age"].transform(lambda x: x.fillna(x.median()))
+
+        # Fill Embarked: Use most frequent
+        df["embarked"] = df["embarked"].fillna(df["embarked"].mode().iloc[0])
+
+        # Drop Cabin (too many missing), Ticket (not useful), and Name after extracting Title
+        df["has_cabin"] = df["cabin"].notnull().astype(int)
+        df.drop(["cabin", "ticket"], axis=1, inplace=True)
+
+        # Create FamilySize
+        df["family_size"] = df["sibsp"] + df["parch"] + 1
+        df["is_alone"] = (df["family_size"] == 1).astype(int)
+
+        # Extract Title from Name
+        df["title"] = df["name"].str.extract(" ([A-Za-z]+)\.", expand=False)
+        rare_titles = ["Lady", "Countess", "Capt", "Col", "Don", "Dr", "Major", "Rev",
+                       "Sir", "Jonkheer", "Dona"]
+        df["title"] = df["title"].replace(rare_titles, "Rare")
+        df["title"] = df["title"].replace({"Mlle": "Miss", "Ms": "Miss", "Mme": "Mrs"})
+        df.drop("name", axis=1, inplace=True)
+
+        # Encode categorical columns
+        df["sex"] = df["sex"].map({"male": 0, "female": 1}).astype(int)
+        df = pd.get_dummies(df, columns=["embarked", "title"], drop_first=True)
 
         self.df = df
         return df
