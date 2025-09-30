@@ -1,6 +1,7 @@
 # Titanic Tools
 
-Beginner-friendly Python package for simple **Titanic Survival Analysis**.
+Beginner-friendly Python package for simple **Titanic Survival Analysis**. The dataset for this project is publickly available in [Kaggle Dataset](https://www.kaggle.com/datasets/yasserh/titanic-dataset)
+
 
 ## Installation
 Clone this repo or download, then install in editable mode:
@@ -102,6 +103,7 @@ Potential extensions that could make the project more advanced:
 - Perform **feature importance analysis** to see which variables matter most.  
 - Explore more advanced visualizations (stacked bar charts, survival curves).  
 - Add a **CLI (command-line interface)** to run basic analyses without a notebook.  
+
 
 
 
