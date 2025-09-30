@@ -10,7 +10,7 @@ pip install -e .
 ```
 
 
-##Usage Example
+## Usage Example
 
 from titanic_tools import TitanicData, TitanicAnalysis
 import matplotlib.pyplot as plt
@@ -25,7 +25,7 @@ print("By sex:\n", ta.survival_rate(by="sex"))
 ta.plot_survival_by("sex")
 plt.show()
 
-##Project Structure
+## Project Structure
 
 src/titanic_tools/     # package (classes + functions)
 notebooks/             # tutorial notebook
@@ -33,6 +33,7 @@ data/                  # Kaggle CSV (kept local; not in repo)
 pyproject.toml         # build config
 README.md              # this file
 LICENSE                # MIT
+
 
 
 
